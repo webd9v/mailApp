@@ -1,0 +1,9 @@
+textarea {
+    min-height: 400px;
+}
+#emails-view{
+display: grid;
+grid-template-columns: auto;
+row-gap: 5px;
+justify-content: space-around;
+}

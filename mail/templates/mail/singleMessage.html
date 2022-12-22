@@ -1,0 +1,80 @@
+{% extends 'mail/layout.html' %}
+{% load static %}
+
+{% block body %}
+<input id="id" type="hidden" value="{{email.id}}"/>
+<input id="sender" type="hidden" value="{{email.sender}}"/>
+<input id="subject" type="hidden" value="{{email.subject}}"/>
+<input id="body" type="hidden" value="{{email.body}}"/>
+<input id="user" type="hidden" value="{{email.user}}"/>
+<input id="archived" type="hidden" value="{{email.archived}}"/>
+<input id="recipients" type="hidden" value="{{recipients}}"/>
+<div id="emailDesc" style="margin:0;padding:0;position:relative;"></div>
+<script type="text/babel">
+    const Email=()=>{
+        const [email,setEmail]=React.useState({
+            id:0,
+            sender:"",
+            subject:"",
+            body:"",
+            recipients:"",
+            isMine:false,
+            isArchived:false,
+        })
+        React.useEffect(()=>{
+            const subject=document.querySelector("#subject").value;
+            const id=document.querySelector("#id").value;
+            const body=document.querySelector("#body").value;
+            const sender=document.querySelector("#sender").value;
+            const isArchived=document.querySelector("#archived").value;
+            const user=document.querySelector("#user").value;
+            const recipients=document.querySelector("#recipients").value;
+            setEmail({
+                id:id,
+                sender:sender,
+                subject:subject,
+                body:body,
+                recipients:recipients.split(" "),
+                isMine:(user==sender),
+                isArchived:isArchived.toLowerCase(),
+            })
+
+        },[])
+        const styleDiv={
+            position: "relative",
+            top:"0",
+            left:"0",
+            display:"flex",
+            flexDirection:"column"
+        }
+        const buttonsStyling={
+            display:'flex',
+            width:'50px',
+            alignItems:'center',
+            justifyContent:'space-between'
+        }
+        const replyBtnStyle={}
+        const archiveBtnStyle={}
+        const styleDivHeader={display:"flex",width:"100%",borderBottom:"1px solid #aaa",alignItems:"center",justifyContent:"space-between"}
+        const subjectStyle={}
+        const recipientsStyle={}
+        const bodyStyle={color:"#000",fontSize:"16px",fontWeight:"700"}
+        const bodyStyleDiv={}
+
+        return(
+            <div style={styleDiv}>
+                <div id="header" style={styleDivHeader}>
+                    <div id="back-btn"><i class="fa-solid fa-caret-left"></i> Back to MailBox</div>
+                    
+                    <div>{email["isMine"] ? <h1>My Sent Message</h1>:<h1>From: {email.sender}</h1>}</div>
+                    <div>{!email["isMine"] && <div style={buttonsStyling}><div id="replyBtn" style={replyBtnStyle}><abbr title="reply"><i class="fa-solid fa-reply"></i></abbr></div><div id="archiveBtn" style={archiveBtnStyle}>{email["isArchived"]?<abbr title="unarchive"><i class="fa-solid fa-folder"></i></abbr>:<abbr title="archive"><i class="fa-solid fa-folder-open"></i></abbr>}</div></div>}</div>
+                </div>
+                <div style={subjectStyle}><h2>Subject: {email.subject}</h2></div>
+                <div style={recipientsStyle}><h3>Sent To: {email.recipients}</h3></div>
+                <div style={bodyStyleDiv}><code style={bodyStyle}>{email.body}</code></div>
+            </div>
+        )
+    }
+    ReactDOM.render(<Email/>,document.querySelector("#emailDesc"));
+</script>
+{% endblock body %}
