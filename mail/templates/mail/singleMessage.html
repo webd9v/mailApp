@@ -17,6 +17,7 @@
             sender:"",
             subject:"",
             body:"",
+            isToMeOnly:false,
             recipients:"",
             isMine:false,
             isArchived:false,
@@ -34,12 +35,77 @@
                 sender:sender,
                 subject:subject,
                 body:body,
+                isToMeOnly:(user==recipients.trim()),
                 recipients:recipients.split(" "),
                 isMine:(user==sender),
                 isArchived:isArchived.toLowerCase(),
             })
-
+            
         },[])
+        const sendRequest=(task,status=false)=>{
+            if(task==="go_home"){
+                history.pushState({mailbox:"inbox"},"","/");
+                location.reload();
+            }else if(task==="reply"){
+                function compose_email() {
+                    history.pushState({mailbox:"compose"},"","");
+                    history.state
+                    // Show compose view and hide other views
+                    document.querySelector('#emails-view').style.display = 'none';
+                    document.querySelector('#compose-view').style.display = 'block';
+
+                    // Clear out composition fields
+                    recipients=document.querySelector('#compose-recipients');recipients.value = '';
+                    subject=document.querySelector('#compose-subject');subject.value = '';
+                    body=document.querySelector('#compose-body');body.value = '';
+                    //onsubmit form
+                    document.getElementById("compose-form").addEventListener("submit",function(ev){
+                        
+                        fetch('/emails', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            recipients: recipients.value,
+                            subject: subject.value,
+                            body:body.value,
+                        })
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            console.log(result)
+                        })
+                    });                    
+                }
+                compose_email();
+            }else if(task==="archive"){
+                if(status){
+                    setEmail(
+                        {
+                            ...email,
+                            isArchived:false,
+                        }
+                    );
+                    fetch(`/emails/${email["id"]}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            archived: false
+                        })
+                    })
+                }else{
+                    setEmail(
+                        {
+                            ...email,
+                            isArchived:true,
+                        }
+                    )
+                    fetch(`/emails/${email["id"]}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            archived: true
+                        })
+                    })
+                }
+            }
+        }
         const styleDiv={
             position: "relative",
             top:"0",
@@ -49,29 +115,71 @@
         }
         const buttonsStyling={
             display:'flex',
-            width:'50px',
+            width:'70px',
             alignItems:'center',
             justifyContent:'space-between'
         }
-        const replyBtnStyle={}
-        const archiveBtnStyle={}
+        const replyBtnStyle={
+            padding:"4px",
+            border: "0px solid rgb(255, 255, 255)",
+            color: "rgb(255, 255, 255)",
+            borderRadius: "17px",
+            backgroundColor: "rgb(193, 7, 255)",
+        }
+        const archiveBtnStyle={
+            padding:"4px",
+            border: "0px solid rgb(255, 255, 255)",
+            color: "rgb(255, 255, 255)",
+            borderRadius: "17px",
+            backgroundColor: "rgb(255, 193, 7)",
+        }
         const styleDivHeader={display:"flex",width:"100%",borderBottom:"1px solid #aaa",alignItems:"center",justifyContent:"space-between"}
-        const subjectStyle={}
-        const recipientsStyle={}
-        const bodyStyle={color:"#000",fontSize:"16px",fontWeight:"700"}
-        const bodyStyleDiv={}
+        const subjectStyle={
+            textAlign:"center",
+            borderBottom:"1px solid grey"
+        }
+        const recipientsStyle={
+            marginLeft:"10px",
+            marginTop:"10px",
+            padding:"5px",
+            color:"rgb(85, 85, 255)"
+        }
+        const bodyStyle={color:"#000",fontSize:"18px",fontWeight:"700",marginLeft:"13px", }
+        const bodyStyleDiv={
+            marginTop:"13px",
+            marginLeft:"13px",
+            backgroundColor:"#ccc",
+            borderRadius:"5px",
+            padding:"15px"
 
+        }
+        const backBtnClass='btn btn-primary'
+        const bodySection={
+            marginTop:"20px",
+            padding:"10px",
+            backgroundColor:"#eee"
+        }
+        const content={
+            display:"inline-block",
+            width:"100%",
+            minHeight:"10pip0%",
+            height:"100%"
+        }
         return(
             <div style={styleDiv}>
                 <div id="header" style={styleDivHeader}>
-                    <div id="back-btn"><i class="fa-solid fa-caret-left"></i> Back to MailBox</div>
+                    <div id="back-btn" onClick={()=>sendRequest("go_home")} className={backBtnClass}><i class="fa-solid fa-caret-left"></i> Back to MailBox</div>
                     
                     <div>{email["isMine"] ? <h1>My Sent Message</h1>:<h1>From: {email.sender}</h1>}</div>
-                    <div>{!email["isMine"] && <div style={buttonsStyling}><div id="replyBtn" style={replyBtnStyle}><abbr title="reply"><i class="fa-solid fa-reply"></i></abbr></div><div id="archiveBtn" style={archiveBtnStyle}>{email["isArchived"]?<abbr title="unarchive"><i class="fa-solid fa-folder"></i></abbr>:<abbr title="archive"><i class="fa-solid fa-folder-open"></i></abbr>}</div></div>}</div>
+                    <div>{!email["isMine"] && <div style={buttonsStyling}><div id="replyBtn" style={replyBtnStyle} onClick={()=>sendRequest("reply")}><abbr title="reply"><i class="fa-solid fa-reply"></i></abbr></div><div id="archiveBtn" style={archiveBtnStyle} onClick={()=>sendRequest("archive",email["isArchived"])}>{email["isArchived"]?<abbr title="unarchive"><i class="fa-solid fa-folder"></i></abbr>:<abbr title="archive"><i class="fa-solid fa-folder-open fa-xs"></i></abbr>}</div></div>}</div>
                 </div>
-                <div style={subjectStyle}><h2>Subject: {email.subject}</h2></div>
-                <div style={recipientsStyle}><h3>Sent To: {email.recipients}</h3></div>
-                <div style={bodyStyleDiv}><code style={bodyStyle}>{email.body}</code></div>
+                <div className={'card'} style={bodySection}>
+                    <div style={subjectStyle}><h2>Subject: {email.subject}</h2></div>
+                    {email["isToMeOnly"] && <div style={recipientsStyle}><h3>Sent To: {email.recipients}</h3></div> }
+                    <div style={content}>
+                        <div style={bodyStyleDiv}><h4><u>Content:</u></h4> <code style={bodyStyle}>{email.body}</code></div>
+                    </div>
+                </div>
             </div>
         )
     }

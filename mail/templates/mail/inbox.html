@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block body %}
+<div class="bg-white p-2" style="display: inline-block;width:100%;height: 100%;">
     <h2>Welcome Back {{ request.user.email }}</h2>
 
     <button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
@@ -15,7 +16,7 @@
 
     </div>
 
-    <div id="compose-view">
+    <div id="compose-view" class="card" style="padding:12px;position:relative;">
         <h3>New Email</h3>
         <form id="compose-form">
             <div class="form-group">
@@ -28,10 +29,10 @@
                 <input class="form-control" id="compose-subject" placeholder="Subject">
             </div>
             <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
-            <input type="submit" class="btn btn-primary"/>
+            <input type="submit" class="btn btn-primary" style="postion:absolute;left:5%;bottom:5%;"/>
         </form>
     </div>
-    
+</div>
 {% endblock %}
 
 {% block script %}
