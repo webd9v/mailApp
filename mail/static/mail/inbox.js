@@ -7,7 +7,14 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#compose').addEventListener('click', compose_email);
 
   // By default, load the inbox
-  load_mailbox('inbox');
+  if(history.state){
+    if(history.state["mailbox"]==="compose"){
+        reply(history.state["recipient"],history.state["subject"]);
+        history.pushState({mailbox:"inbox"},"","");
+    }
+  }else{
+    load_mailbox('inbox');
+  }
 });
 
 function compose_email() {

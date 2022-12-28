@@ -47,35 +47,8 @@
                 history.pushState({mailbox:"inbox"},"","/");
                 location.reload();
             }else if(task==="reply"){
-                function compose_email() {
-                    history.pushState({mailbox:"compose"},"","");
-                    history.state
-                    // Show compose view and hide other views
-                    document.querySelector('#emails-view').style.display = 'none';
-                    document.querySelector('#compose-view').style.display = 'block';
-
-                    // Clear out composition fields
-                    recipients=document.querySelector('#compose-recipients');recipients.value = '';
-                    subject=document.querySelector('#compose-subject');subject.value = '';
-                    body=document.querySelector('#compose-body');body.value = '';
-                    //onsubmit form
-                    document.getElementById("compose-form").addEventListener("submit",function(ev){
-                        
-                        fetch('/emails', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            recipients: recipients.value,
-                            subject: subject.value,
-                            body:body.value,
-                        })
-                        })
-                        .then(response => response.json())
-                        .then(result => {
-                            console.log(result)
-                        })
-                    });                    
-                }
-                compose_email();
+                history.pushState({mailbox:"compose",recipient:email["sender"],subject:email["subject"]},"","/");
+                location.reload();
             }else if(task==="archive"){
                 if(status){
                     setEmail(
