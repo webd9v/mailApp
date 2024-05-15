@@ -1,0 +1,28 @@
+{% extends "mail/layout.html" %} {% load static %} 
+{% block body %}
+<div
+    class="bg-white p-2"
+    style="display: inline-block; width: 100%; height: 100%"
+>
+    <div style="position: relative">
+        <button
+            class="btn btn-sm btn-outline-primary"
+            style="position: absolute; right: 0"
+            id="back-button"
+        >
+            Back
+        </button>
+    </div>
+    <h2>Settings</h2>
+    <button class="btn btn-sm btn-outline-primary" id="spam-settings-btn">
+        Spam Settings
+    </button>
+
+    <hr />
+
+    <div id="tabs-view"></div>
+</div>
+{% endblock %}
+{% block script %}
+<script src="{% static 'mail/settings.js' %}"></script>
+{% endblock %}

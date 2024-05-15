@@ -9,7 +9,7 @@
             <div>{{ message }}</div>
         {% endif %}
 
-        <form action="{% url 'register' %}" method="post">
+        <form action="{% url 'mail:register' %}" method="post">
             {% csrf_token %}
             <div class="form-group">
                 <input class="form-control" type="email" name="email" placeholder="Email Address">
@@ -23,6 +23,6 @@
             <input class="btn btn-primary" type="submit" value="Register">
         </form>
 
-        <div style="display:flex;justify-items: flex-start;">Already have an account? <a href="{% url 'login' %}" style="margin-left:10px;">Log In here.</a></div>
+        <div style="display:flex;justify-items: flex-start;">Already have an account? <a href="{% url 'mail:login' %}" style="margin-left:10px;">Log In here.</a></div>
     </div>
 {% endblock %}

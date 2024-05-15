@@ -18,7 +18,7 @@ def index(request):
 
     # Everyone else is prompted to sign in
     else:
-        return HttpResponseRedirect(reverse("login"))
+        return HttpResponseRedirect(reverse("mail:login"))
 
 
 @csrf_exempt
@@ -79,7 +79,7 @@ def mailbox(request, mailbox):
     # Filter emails returned based on mailbox
     if mailbox == "inbox":
         emails = Email.objects.filter(
-            user=request.user, recipients=request.user, archived=False
+            user=request.user, recipients=request.user, archived=False, is_spam=False
         )
     elif mailbox == "sent":
         emails = Email.objects.filter(
@@ -89,6 +89,8 @@ def mailbox(request, mailbox):
         emails = Email.objects.filter(
             user=request.user, recipients=request.user, archived=True
         )
+    elif mailbox == "spam":
+        emails = Email.objects.filter(user=request.user, archived=False, is_spam=True)
     else:
         return JsonResponse({"error": "Invalid mailbox."}, status=400)
 
@@ -139,7 +141,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("mail:index"))
         else:
             return render(request, "mail/login.html", {
                 "message": "Invalid email and/or password."
@@ -150,7 +152,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("mail:index"))
 
 
 def register(request):
@@ -175,13 +177,13 @@ def register(request):
                 "message": "Email address already taken."
             })
         login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("mail:index"))
     else:
         return render(request, "mail/register.html")
 
 @csrf_exempt
 @login_required
-def displayMessage(request,email_id):
+def displayMessage(request, email_id):
     email=Email.objects.get(id=email_id)
     recipients=""
     for recipient in email.recipients.all():
@@ -189,4 +191,10 @@ def displayMessage(request,email_id):
     return render(request,"mail/singleMessage.html",{
         "email":email,
         "recipients":recipients,
+    })
+
+@login_required
+def settings(request):
+    return render(request, "mail/settings.html", {
+        "user": request.user 
     })

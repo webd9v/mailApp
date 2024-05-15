@@ -4,18 +4,39 @@
 <html lang="en">
     <head>
         <title>{% block title %}Mail{% endblock %}</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <link rel="stylesheet" href="{% static 'mail/styles.css' %}">
-        <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
-        <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+            integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+            crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="{% static 'mail/styles.css' %}" />
+        <script
+            src="https://unpkg.com/react@17/umd/react.production.min.js"
+            crossorigin
+        ></script>
+        <script
+            src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"
+            crossorigin
+        ></script>
         <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-        <script src="https://kit.fontawesome.com/ed8ac7d19d.js" crossorigin="anonymous"></script>
+        <script
+            src="https://kit.fontawesome.com/ed8ac7d19d.js"
+            crossorigin="anonymous"
+        ></script>
 
-        {% block script %}
-        {% endblock %}
+        {% block script %} {% endblock %}
     </head>
-    <body class="container bg-light" style="display: flex;height: 1000px;flex-direction: column;min-height: 100%;">
-        {% block body %}
-        {% endblock %}
+    <body
+        class="container bg-light"
+        style="
+            display: flex;
+            height: 1000px;
+            flex-direction: column;
+            min-height: 100%;
+            max-height: 100%;
+        "
+    >
+        {% block body %} {% endblock %}
     </body>
 </html>

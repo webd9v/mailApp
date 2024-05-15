@@ -1,40 +1,69 @@
-{% extends "mail/layout.html" %}
-{% load static %}
-
-{% block body %}
-<div class="bg-white p-2" style="display: inline-block;width:100%;height: 100%;">
+{% extends "mail/layout.html" %} {% load static %} {% block body %}
+<div
+    class="bg-white p-2"
+    style="display: inline-block; width: 100%; height: 100%"
+>
     <h2>Welcome Back {{ request.user.email }}</h2>
 
     <button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
     <button class="btn btn-sm btn-outline-primary" id="compose">Compose</button>
     <button class="btn btn-sm btn-outline-primary" id="sent">Sent</button>
-    <button class="btn btn-sm btn-outline-primary" id="archived">Archived</button>
-    <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
-    <hr>
+    <button class="btn btn-sm btn-outline-primary" id="archived">
+        Archived
+    </button>
+    <button class="btn btn-sm btn-outline-primary" id="spam">Spam</button>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'mail:logout' %}"
+        >Log Out</a
+    >
+    <a
+        class="btn btn-sm btn-outline-primary"
+        href="{% url 'mail:settings' %}"
+        style="float: right"
+        >Settings</a
+    >
+    <hr />
 
-    <div id="emails-view">
+    <div id="emails-view"></div>
 
-    </div>
-
-    <div id="compose-view" class="card" style="padding:12px;position:relative;">
+    <div
+        id="compose-view"
+        class="card"
+        style="padding: 12px; position: relative"
+    >
         <h3>New Email</h3>
         <form id="compose-form">
             <div class="form-group">
-                From: <input disabled id="compose-sender" class="form-control" value="{{ request.user.email }}">
+                From:
+                <input
+                    disabled
+                    id="compose-sender"
+                    class="form-control"
+                    value="{{ request.user.email }}"
+                />
             </div>
             <div class="form-group">
-                To: <input id="compose-recipients" class="form-control">
+                To: <input id="compose-recipients" class="form-control" />
             </div>
             <div class="form-group">
-                <input class="form-control" id="compose-subject" placeholder="Subject">
+                <input
+                    class="form-control"
+                    id="compose-subject"
+                    placeholder="Subject"
+                />
             </div>
-            <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
-            <input type="submit" class="btn btn-primary" style="postion:absolute;left:5%;bottom:5%;"/>
+            <textarea
+                class="form-control"
+                id="compose-body"
+                placeholder="Body"
+            ></textarea>
+            <input
+                type="submit"
+                class="btn btn-primary"
+                style="postion: absolute; left: 5%; bottom: 5%"
+            />
         </form>
     </div>
 </div>
-{% endblock %}
-
-{% block script %}
-    <script src="{% static 'mail/inbox.js' %}"></script>
+{% endblock %} {% block script %}
+<script src="{% static 'mail/inbox.js' %}"></script>
 {% endblock %}
