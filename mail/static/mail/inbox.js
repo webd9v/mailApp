@@ -76,7 +76,6 @@ function load_mailbox(mailbox) {
             .then((response) => response.json())
             .then((emails) => {
                 // Print emails
-                console.log(emails);
                 emails.map((email) => {
                     const divEmailCont = document.createElement("div");
                     const btnSave = document.createElement("button");
@@ -164,7 +163,6 @@ function load_mailbox(mailbox) {
             .then((response) => response.json())
             .then((emails) => {
                 // Print emails
-                console.log(emails);
 
                 emails.map((email) => {
                     const divEmailCont = document.createElement("div");
@@ -256,7 +254,6 @@ function load_mailbox(mailbox) {
             .then((emails) => {
                 // Print emails
                 emails.map((email) => {
-                    console.log(email);
                     const divEmailCont = document.createElement("div");
                     divEmailCont.classList.add("mb-2");
                     const btnOpen = document.createElement("a");
@@ -293,7 +290,6 @@ function load_mailbox(mailbox) {
             .then((response) => response.json())
 
             .then((emails) => {
-                console.log(emails);
                 emails.map((email) => {
                     const divEmailCont = document.createElement("div");
                     const btnSave = document.createElement("button");

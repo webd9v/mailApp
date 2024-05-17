@@ -7,7 +7,7 @@ from django.shortcuts import HttpResponse, HttpResponseRedirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import User, Email
+from .models import User, Email, SpamEmail
 
 
 def index(request):
@@ -198,3 +198,33 @@ def settings(request):
     return render(request, "mail/settings.html", {
         "user": request.user 
     })
+
+@csrf_exempt
+@login_required
+def spam_emails(request):
+    if request.method == "GET":
+        spam_emails = SpamEmail.objects.filter(user=request.user)
+        return JsonResponse([email.email_address for email in spam_emails], safe=False)
+
+    elif request.method == "POST":
+        data = json.loads(request.body)
+        email_address = data.get("email")
+
+        try:
+            SpamEmail.objects.create(user=request.user, email_address=email_address)
+            Email.objects.filter(sender__email=email_address, user=request.user).update(is_spam=True)
+            return JsonResponse({"message": "Email marked as spam."}, status=201)
+        except IntegrityError:
+            return JsonResponse({"error": "Email already marked as spam."}, status=400)
+    elif request.method == "DELETE":
+        email_address = request.GET.get("email")
+
+        if email_address:
+            SpamEmail.objects.filter(user=request.user, email_address=email_address).delete()
+            Email.objects.filter(sender__email=email_address, user=request.user).update(is_spam=False)
+            return JsonResponse({"message": "Email removed from spam list."}, status=200)
+        else:
+            return JsonResponse({"error": "Email address required."}, status=400)
+
+    else:
+        return JsonResponse({"error": "Invalid request method."}, status=400)
